@@ -99,8 +99,28 @@ function App() {
       <div style={{ textAlign: "center" }}>{columns.todo.items.map(item => <div key={item.id}>{item.content}</div>)}</div> */}
 
       <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
-        <div className='flex items-center justify-center flex-col1 gap-4 w-full max-w-6xl'>
+        <div className='flex items-center justify-center flex-col gap-4 w-full max-w-6xl'>
           <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
+
+          <div className="mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden">
+            <input type="text" value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              placeholder='Add a new task'
+              className='flex-grow bg-zinc-500 rounded-md p-3 w-full text-white'
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  addNewTask();
+                }
+              }}
+            />
+
+            <select value={activeColumns} onChange={(e) => setActiveColumns(e.target.value as "todo" | "inProgress" | "done")} id="">
+              <option value="todo">To Do</option>
+              <option value="inProgress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+
+          </div>
         </div>
       </div>
 
