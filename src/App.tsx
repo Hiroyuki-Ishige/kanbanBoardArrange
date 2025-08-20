@@ -99,7 +99,9 @@ function App() {
       <div style={{ textAlign: "center" }}>{columns.todo.items.map(item => <div key={item.id}>{item.content}</div>)}</div> */}
 
       <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
-        <div className='text-white'>hello, Ishige!!</div>
+        <div className='flex items-center justify-center flex-col1 gap-4 w-full max-w-6xl'>
+          <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
+        </div>
       </div>
 
     </>
