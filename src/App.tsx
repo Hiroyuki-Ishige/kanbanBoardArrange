@@ -95,18 +95,24 @@ function App() {
 
   return (
     <>
-      {/* <div style={{ textAlign: "center" }}>Hello Ishige!!</div>
-      <div style={{ textAlign: "center" }}>{columns.todo.items.map(item => <div key={item.id}>{item.content}</div>)}</div> */}
-
+      {/* div for whole screen */}
       <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
+
+        {/* div to contain the logo "React Kanban Board" and input box */}
         <div className='flex items-center justify-center flex-col gap-4 w-full max-w-6xl'>
+          {/* Logo */}
           <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
 
+          {/*div for input box, selection, add button*/}
           <div className="mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden">
-            <input type="text" value={newTask}
+
+            {/* input box */}
+            <input value={newTask}
+              className='flex-grow bg-zinc-500 rounded-md p-3 w-full text-white'
+              type="text"
               onChange={(e) => setNewTask(e.target.value)}
               placeholder='Add a new task'
-              className='flex-grow bg-zinc-500 rounded-md p-3 w-full text-white'
+
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   addNewTask();
@@ -114,11 +120,24 @@ function App() {
               }}
             />
 
-            <select value={activeColumns} onChange={(e) => setActiveColumns(e.target.value as "todo" | "inProgress" | "done")} id="">
-              <option value="todo">To Do</option>
-              <option value="inProgress">In Progress</option>
-              <option value="done">Done</option>
+            {/* Select box for choosing column */}
+            <select value={activeColumns}
+              className='p-3 bg-zinc-500 text-white border-0 border-zinc-600 rounded-md ml-2'
+            >
+
+              {Object.keys(columns).map((columnId) => (
+                <option key={columnId} value={columnId}>
+                  {columns[columnId as keyof typeof columns].name}
+                </option>
+              ))}
+
             </select>
+
+            {/* add button */}
+            <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-yellow-500 to-yellow-300 hover:from-yellow-500 hover:to-amber-500 transition-all duration-500 cursor-pointer'
+              onClick={addNewTask}>
+              Add Task
+            </button>
 
           </div>
         </div>
@@ -129,3 +148,5 @@ function App() {
 }
 
 export default App
+
+//TODO studay <select/> from line 115
