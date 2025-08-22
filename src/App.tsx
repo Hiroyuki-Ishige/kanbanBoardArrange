@@ -56,7 +56,7 @@ function App() {
     setDraggedItem({ columnId, item });
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, columnId: "todo" | "inProgress" | "done") => {
     e.preventDefault();
   };
 
@@ -85,7 +85,8 @@ function App() {
       border: "border-blue-400"
     },
     inProgress: {
-      header: "bg-gradient-to-r from-yellow-600 to-yellow-400"
+      header: "bg-gradient-to-r from-yellow-600 to-yellow-400",
+      border: "border-yellow-400"
     },
     done: {
       header: "bg-gradient-to-r from-green-600 to-teal-400",
@@ -98,7 +99,7 @@ function App() {
       {/* div for whole screen */}
       <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
 
-        {/* div to contain the logo "React Kanban Board" and input box */}
+        {/* div to contain the logo "React Kanban Board", input box, list of tasks */}
         <div className='flex items-center justify-center flex-col gap-4 w-full max-w-6xl'>
           {/* Logo */}
           <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
@@ -136,8 +137,24 @@ function App() {
             {/* add button */}
             <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-yellow-500 to-yellow-300 hover:from-yellow-500 hover:to-amber-500 transition-all duration-500 cursor-pointer'
               onClick={addNewTask}>
-              Add Task
+              Add
             </button>
+          </div>
+
+          {/* List of tasks: To do, In progress, Done */}
+          <div className='flex gap-6 overflow-x-auto pb-6 w-full'>
+            {Object.keys(columns).map((columnId) => (
+              <div key={columnId}
+                className={`flex-shrink-0 w-80 bg-zinc-800 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].border ?? ""}`}
+                onDragOver={(e) => handleDragOver(e, columnId as "todo" | "inProgress" | "done")}
+                onDrop={(e) => handleDrop(e, columnId as "todo" | "inProgress" | "done")}
+              >
+                <div className={`p-4 text-white font-bold text-x1 rounded-t-md ${columnStyles[columnId as keyof typeof columnStyles].header}`}>
+                  {columns[columnId as keyof typeof columns].name}
+                  <span className='ml-2 px-2 py-1 bg-zinc-700 bg-opacity-50 rounded-full text-sm'>{columns[columnId as keyof typeof columns].items.length}</span>
+                </div>
+              </div>
+            ))}
 
           </div>
         </div>
