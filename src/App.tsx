@@ -89,7 +89,7 @@ function App() {
       border: "border-yellow-400"
     },
     done: {
-      header: "bg-gradient-to-r from-green-600 to-teal-400",
+      header: "bg-gradient-to-r from-green-600 to-green-400",
       border: "border-green-400"
     }
   }
@@ -123,6 +123,7 @@ function App() {
 
             {/* Select box for choosing column */}
             <select value={activeColumns}
+              onChange={(e) => setActiveColumns(e.target.value as "todo" | "inProgress" | "done")}
               className='p-3 bg-zinc-500 text-white border-0 border-zinc-600 rounded-md ml-2'
             >
 
@@ -145,13 +146,37 @@ function App() {
           <div className='flex gap-6 overflow-x-auto pb-6 w-full'>
             {Object.keys(columns).map((columnId) => (
               <div key={columnId}
-                className={`flex-shrink-0 w-80 bg-zinc-800 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].border ?? ""}`}
+                className={`flex-shrink-0 w-80 bg-zinc-800 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].header ?? ""}`}
                 onDragOver={(e) => handleDragOver(e, columnId as "todo" | "inProgress" | "done")}
                 onDrop={(e) => handleDrop(e, columnId as "todo" | "inProgress" | "done")}
               >
-                <div className={`p-4 text-white font-bold text-x1 rounded-t-md ${columnStyles[columnId as keyof typeof columnStyles].header}`}>
+                <div className={`p-4 text-white font-bold text-x1 rounded-t-md 
+                  ${columnStyles[columnId as keyof typeof columnStyles].header}
+                  `}>
                   {columns[columnId as keyof typeof columns].name}
                   <span className='ml-2 px-2 py-1 bg-zinc-700 bg-opacity-50 rounded-full text-sm'>{columns[columnId as keyof typeof columns].items.length}</span>
+                </div>
+
+                {/* List of tasks */}
+                <div className='p-3 min-h-64'>
+                  {columns[columnId as keyof typeof columns].items.length === 0 ? (
+                    <div className='text-center py-10 text-white italic text-lg'>Drop tasks here</div>
+                  ) : (
+                    columns[columnId as keyof typeof columns].items.map((item) => (
+                      <div key={item.id} className='p-4 mb-3 bg-zinc-700 text-white rounded-lg shadow-md cursor-move flex items-center justify-between transform transition-all duration-300 hover:scale-105 hover:shadow-lg '
+                      draggable={true}
+                      onDragStart={() => handleDragStart(columnId as keyof typeof columns, item)}>
+                        <span className='mr-2'>{item.content}</span>
+                      
+                      {/* delete button */}
+                      <button onClick={() => removeTask(columnId as keyof typeof columns, item.id)}
+                        className='text-zinc-500 hover:text-red-400 transition-colors duration-300 w-6 h-6 flex items-center justify-center round-full hover:bg-zinc-600 '>
+                          <span className='text-lg cursor-pointer'>X</span>
+
+                      </button>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             ))}
@@ -166,4 +191,4 @@ function App() {
 
 export default App
 
-//TODO studay <select/> from line 115
+//TODO studay onDragOver in line 149
