@@ -58,6 +58,7 @@ function App() {
 
   const handleDragOver = (e: React.DragEvent, columnId: "todo" | "inProgress" | "done") => {
     e.preventDefault();
+    console.log(`Dragging over ${columnId}`);
   };
 
   // Handle dropping a task
@@ -164,16 +165,16 @@ function App() {
                   ) : (
                     columns[columnId as keyof typeof columns].items.map((item) => (
                       <div key={item.id} className='p-4 mb-3 bg-zinc-700 text-white rounded-lg shadow-md cursor-move flex items-center justify-between transform transition-all duration-300 hover:scale-105 hover:shadow-lg '
-                      draggable={true}
-                      onDragStart={() => handleDragStart(columnId as keyof typeof columns, item)}>
+                        draggable={true}
+                        onDragStart={() => handleDragStart(columnId as keyof typeof columns, item)}>
                         <span className='mr-2'>{item.content}</span>
-                      
-                      {/* delete button */}
-                      <button onClick={() => removeTask(columnId as keyof typeof columns, item.id)}
-                        className='text-zinc-500 hover:text-red-400 transition-colors duration-300 w-6 h-6 flex items-center justify-center round-full hover:bg-zinc-600 '>
+
+                        {/* delete button */}
+                        <button onClick={() => removeTask(columnId as keyof typeof columns, item.id)}
+                          className='text-zinc-500 hover:text-red-400 transition-colors duration-300 w-6 h-6 flex items-center justify-center round-full hover:bg-zinc-600 '>
                           <span className='text-lg cursor-pointer'>X</span>
 
-                      </button>
+                        </button>
                       </div>
                     ))
                   )}
@@ -191,4 +192,4 @@ function App() {
 
 export default App
 
-//TODO studay onDragOver in line 149
+//TODO Check error at line 79 "item", and deploy to vercel.
