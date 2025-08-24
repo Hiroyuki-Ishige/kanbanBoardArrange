@@ -69,6 +69,9 @@ function App() {
 
     const { columnId: sourceColumnId, item } = draggedItem;
 
+    // To solve error that "item" is declared but never used.
+    console.log(item)
+
     if (sourceColumnId === columnId) return;
 
     const updatedColumns = { ...columns };
