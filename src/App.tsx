@@ -1,7 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from './supabaseClient';
+import Auth from './Auth';
+import type { User } from '@supabase/supabase-js';
 
 
 function App() {
+  // Control user authentication
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => listener?.subscription.unsubscribe();
+  }, []);
+
+  if (!user) {
+    return <Auth />;
+  }
+
   // Define the initial state for the columns
   const [columns, setColumns] = useState({
     todo: {
@@ -195,4 +213,3 @@ function App() {
 
 export default App
 
-//TODO Check error at line 79 "item", and deploy to vercel.
