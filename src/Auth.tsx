@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
+import { useNavigate } from 'react-router-dom';
+
 
 function Auth() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate();
+
     const signUp = async () => {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) alert(error.message);
-        else alert('Check your email for confirmation!');
+        else alert('Your email and password have been registered! Check your email for confirmation!');
     };
 
     const signIn = async () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) alert(error.message);
-        else alert('Signed in!');
+        else navigate('/kanbanboard');
+
     };
 
     return (
@@ -35,4 +40,3 @@ function Auth() {
 
 export default Auth;
 
-//TODO: check user registration functionality
