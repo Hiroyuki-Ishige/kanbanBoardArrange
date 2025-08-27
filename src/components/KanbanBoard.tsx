@@ -1,6 +1,4 @@
-// Moved from src/KanbanBoard.tsx
-// Please copy the contents of your original KanbanBoard.tsx here.
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 
 function KanbanBoard() {

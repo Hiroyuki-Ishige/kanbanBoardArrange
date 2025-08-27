@@ -1,6 +1,3 @@
-// Moved from src/Auth.tsx
-// Please copy the contents of your original Auth.tsx here.
-
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
