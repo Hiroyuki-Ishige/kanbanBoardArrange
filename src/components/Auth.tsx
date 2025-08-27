@@ -1,5 +1,8 @@
+// Moved from src/Auth.tsx
+// Please copy the contents of your original Auth.tsx here.
+
 import { useState } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,9 +20,12 @@ function Auth() {
 
     const signIn = async () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert(error.message);
-        else navigate('/kanbanboard');
-
+        if (error) {
+            alert(error.message);
+        } else {
+            navigate('/kanban');
+            alert('You have successfully signed in!');
+        }
     };
 
     return (
