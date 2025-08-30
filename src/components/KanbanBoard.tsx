@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient';
 import SignOut from './SignOut';
-import { data } from 'react-router-dom';
 
 function KanbanBoard() {
 
