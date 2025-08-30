@@ -1,26 +1,70 @@
-import { useState } from 'react'
-
+import { useEffect, useState } from 'react'
+import { supabase } from '../supabaseClient';
+import SignOut from './SignOut';
+import { data } from 'react-router-dom';
 
 function KanbanBoard() {
-    
-    // Define the initial state for the columns
-    const [columns, setColumns] = useState({
-        todo: {
-            name: "Todo",
-            items: [
-                { id: "1", content: "Market reserch" },
-                { id: "2", content: "Write Project" }
-            ]
-        },
-        inProgress: {
-            name: "In Progress",
-            items: [{ id: "3", content: "Design UI mockup" },]
-        },
-        done: {
-            name: "Done",
-            items: [{ id: "4", content: "Set up repository" },]
-        }
+
+    type TaskItem = { id: string; content: string };
+    type Columns = {
+        todo: { name: string; items: TaskItem[] };
+        inProgress: { name: string; items: TaskItem[] };
+        done: { name: string; items: TaskItem[] };
+    };
+
+    const [columns, setColumns] = useState<Columns>({
+        todo: { name: "Todo", items: [] },
+        inProgress: { name: "In Progress", items: [] },
+        done: { name: "Done", items: [] }
     });
+
+
+    // Function to fetch tasks from Supabase
+    const fetchTasks = async () => {
+        // Get the current user
+        const { data: userData } = await supabase.auth.getUser();
+        const userEmail = userData.user?.email;
+
+        //Check current user and email
+        console.log("Current user email:", userEmail);
+
+        // Fetch tasks from the database for the current user
+        const { data: tasks, error } = await supabase
+            .from('tasks')
+            .select('*')
+            .eq('user_email', userEmail);
+
+        if (error) {
+            alert('Error fetching tasks:' + error.message);
+
+        } else {
+            console.log("Fetched tasks:", tasks);
+            // Build a new columns object
+            const newColumns: Columns = {
+                todo: { name: "Todo", items: [] },
+                inProgress: { name: "In Progress", items: [] },
+                done: { name: "Done", items: [] }
+            };
+
+            tasks.forEach((task) => {
+                if (["todo", "inProgress", "done"].includes(task.status)) {
+                    newColumns[task.status as "todo" | "inProgress" | "done"].items.push({
+                        id: task.id,
+                        content: task.content
+                    });
+                }
+
+            });
+            setColumns(newColumns);
+
+            console.log("columns:", newColumns);
+        }
+    };
+
+    // Fetch tasks when the component mounts
+    useEffect(() => {
+        fetchTasks();
+    }, []);
 
     // Define the state for the new task input and the active column
     const [newTask, setNewTask] = useState("");
@@ -30,21 +74,32 @@ function KanbanBoard() {
         item: { id: string; content: string };
     } | null>(null);
 
-    // Define the function to handle adding a new task
-    const addNewTask = () => {
+    // handle adding a new task
+    const addNewTask = async () => {
         if (newTask.trim() === "") return;
 
-        const updatedColumns = { ...columns };
-        updatedColumns[activeColumns].items.push({
-            id: Date.now().toString(),
-            content: newTask
-        });
+        const { data: userData } = await supabase.auth.getUser();
+        const userEmail = userData.user?.email;
 
-        setColumns(updatedColumns);
+        const { error } = await supabase.from('tasks').insert([
+            {
+                user_email: userEmail,
+                status: activeColumns,
+                content: newTask
+            }
+        ]);
+
+        if (error) {
+            alert('Error saving task: ' + error.message);
+            return;
+        }
+
         setNewTask("");
+        fetchTasks(); // Call fetchTasks function to reload tasks from Supabase
+
     };
 
-    // Define the function to handle removing a task
+    // handle removing a task
     const removeTask = (columnId: "todo" | "inProgress" | "done", taskId: string) => {
         const updatedColumns = { ...columns };
 
@@ -101,12 +156,20 @@ function KanbanBoard() {
 
     return (
         <>
-        <div>Kanban Board</div>
+
             {/* div for whole screen */}
             <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
 
-                {/* div to contain the logo "React Kanban Board", input box, list of tasks */}
+                {/* div to contain SignOut button, logo "React Kanban Board", input box, list of tasks */}
                 <div className='flex items-center justify-center flex-col gap-4 w-full max-w-6xl'>
+
+                    {/* Log-out button */}
+                    <div className="flex gap-6 overflow-x-auto pb-6 w-full">
+                        <div className='ml-auto'>
+                            <SignOut />
+                        </div>
+                    </div>
+
                     {/* Logo */}
                     <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
 

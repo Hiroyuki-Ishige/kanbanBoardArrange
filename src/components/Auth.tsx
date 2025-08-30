@@ -21,7 +21,6 @@ function Auth() {
             alert(error.message);
         } else {
             navigate('/kanban');
-            alert('You have successfully signed in!');
         }
     };
 
