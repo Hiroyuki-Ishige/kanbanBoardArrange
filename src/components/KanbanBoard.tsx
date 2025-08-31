@@ -26,6 +26,7 @@ function KanbanBoard() {
 
         //Check current user and email
         console.log("Current user email:", userEmail);
+        console.log("userData", userData)
 
         // Fetch tasks from the database for the current user
         const { data: tasks, error } = await supabase
@@ -33,11 +34,13 @@ function KanbanBoard() {
             .select('*')
             .eq('user_email', userEmail);
 
+        console.log("tasks", tasks);
+
         if (error) {
             alert('Error fetching tasks:' + error.message);
 
         } else {
-            console.log("Fetched tasks:", tasks);
+
             // Build a new columns object
             const newColumns: Columns = {
                 todo: { name: "Todo", items: [] },
@@ -55,8 +58,6 @@ function KanbanBoard() {
 
             });
             setColumns(newColumns);
-
-            console.log("columns:", newColumns);
         }
     };
 
@@ -99,12 +100,20 @@ function KanbanBoard() {
     };
 
     // handle removing a task
-    const removeTask = (columnId: "todo" | "inProgress" | "done", taskId: string) => {
+    const removeTask = async (columnId: "todo" | "inProgress" | "done", taskId: string) => {
         const updatedColumns = { ...columns };
 
         updatedColumns[columnId].items = updatedColumns[columnId].items.filter((item) => item.id !== taskId);
 
         setColumns(updatedColumns);
+
+        // Delete from Supabase
+        const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+        if (error) {
+            console.error("Error deleting task from Supabase:", error.message);
+        }
+
+        console.log("removeTask function triggered");
     };
 
     const handleDragStart = (columnId: "todo" | "inProgress" | "done", item: { id: string; content: string }) => {
@@ -140,18 +149,48 @@ function KanbanBoard() {
 
     const columnStyles = {
         todo: {
-            header: "bg-gradient-to-r from-blue-600 to-blue-400",
-            border: "border-blue-400"
+            header:"bg-gradient-to-r from-blue-600 to-blue-400",
+            border: "border-blue-400",
+            body:"bg-blue-400"
         },
         inProgress: {
             header: "bg-gradient-to-r from-yellow-600 to-yellow-400",
-            border: "border-yellow-400"
+            border: "border-yellow-400",
+            body:"bg-yellow-400"
         },
         done: {
             header: "bg-gradient-to-r from-green-600 to-green-400",
-            border: "border-green-400"
+            border: "border-green-400",
+            body:"bg-green-400"
         }
     }
+    // update [columns] to supabase
+    useEffect(() => {
+        const updateTasks = async () => {
+            const { data: userData } = await supabase.auth.getUser();
+            const userEmail = userData.user?.email;
+            // Flatten all tasks into a single array
+            const allTasks = [
+                ...columns.todo.items.map(item => ({ ...item, status: 'todo' })),
+                ...columns.inProgress.items.map(item => ({ ...item, status: 'inProgress' })),
+                ...columns.done.items.map(item => ({ ...item, status: 'done' }))
+            ];
+
+            // Upsert each task to Supabase
+            allTasks.forEach(async (task) => {
+                await supabase.from('tasks').upsert({
+                    id: task.id,
+                    user_email: userEmail, // get current user's email
+                    status: task.status,
+                    content: task.content
+                });
+            });
+        };
+
+        updateTasks();
+        console.log("useEffect after removeTask function triggered");
+
+    }, [columns]);
 
     return (
         <>
@@ -170,7 +209,7 @@ function KanbanBoard() {
                     </div>
 
                     {/* Logo */}
-                    <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300'>React Kanban Board</h1>
+                    <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-300'>React Kanban Board</h1>
 
                     {/*div for input box, selection, add button*/}
                     <div className="mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden">
@@ -204,7 +243,7 @@ function KanbanBoard() {
                         </select>
 
                         {/* add button */}
-                        <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-yellow-500 to-yellow-300 hover:from-yellow-500 hover:to-amber-500 transition-all duration-500 cursor-pointer'
+                        <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-blue-300 to-blue-300 hover:from-blue-500 hover:to-blue-500 transition-all duration-500 cursor-pointer'
                             onClick={addNewTask}>
                             Add
                         </button>
@@ -214,7 +253,7 @@ function KanbanBoard() {
                     <div className='flex gap-6 overflow-x-auto pb-6 w-full'>
                         {Object.keys(columns).map((columnId) => (
                             <div key={columnId}
-                                className={`flex-shrink-0 w-80 bg-zinc-800 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].header ?? ""}`}
+                                className={`flex-shrink-0 w-80 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].body ?? ""}`}
                                 onDragOver={(e) => handleDragOver(e, columnId as "todo" | "inProgress" | "done")}
                                 onDrop={(e) => handleDrop(e, columnId as "todo" | "inProgress" | "done")}
                             >
