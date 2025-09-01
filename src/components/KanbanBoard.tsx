@@ -149,19 +149,19 @@ function KanbanBoard() {
 
     const columnStyles = {
         todo: {
-            header:"bg-gradient-to-r from-blue-600 to-blue-400",
+            header: "bg-gradient-to-r from-blue-600 to-blue-400",
             border: "border-blue-400",
-            body:"bg-blue-400"
+            body: "bg-blue-400"
         },
         inProgress: {
             header: "bg-gradient-to-r from-yellow-600 to-yellow-400",
             border: "border-yellow-400",
-            body:"bg-yellow-400"
+            body: "bg-yellow-400"
         },
         done: {
             header: "bg-gradient-to-r from-green-600 to-green-400",
             border: "border-green-400",
-            body:"bg-green-400"
+            body: "bg-green-400"
         }
     }
     // update [columns] to supabase
@@ -193,10 +193,10 @@ function KanbanBoard() {
     }, [columns]);
 
     return (
-        <>
+        <div>
 
             {/* div for whole screen */}
-            <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
+            <div className='p-2 sm:p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center overflow-y-auto'>
 
                 {/* div to contain SignOut button, logo "React Kanban Board", input box, list of tasks */}
                 <div className='flex items-center justify-center flex-col gap-4 w-full max-w-6xl'>
@@ -212,7 +212,7 @@ function KanbanBoard() {
                     <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-300'>React Kanban Board</h1>
 
                     {/*div for input box, selection, add button*/}
-                    <div className="mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden">
 
                         {/* input box */}
                         <input value={newTask}
@@ -229,31 +229,34 @@ function KanbanBoard() {
                         />
 
                         {/* Select box for choosing column */}
-                        <select value={activeColumns}
-                            onChange={(e) => setActiveColumns(e.target.value as "todo" | "inProgress" | "done")}
-                            className='p-3 bg-zinc-500 text-white border-0 border-zinc-600 rounded-md ml-2'
-                        >
+                        <div className="flex flex-col sm:flex-row">
+                            <select value={activeColumns}
+                                onChange={(e) => setActiveColumns(e.target.value as "todo" | "inProgress" | "done")}
+                                className='p-3 bg-zinc-500 text-white border-0 border-zinc-600 rounded-md ml-2'
+                            >
 
-                            {Object.keys(columns).map((columnId) => (
-                                <option key={columnId} value={columnId}>
-                                    {columns[columnId as keyof typeof columns].name}
-                                </option>
-                            ))}
+                                {Object.keys(columns).map((columnId) => (
+                                    <option key={columnId} value={columnId}>
+                                        {columns[columnId as keyof typeof columns].name}
+                                    </option>
+                                ))}
 
-                        </select>
+                            </select>
 
-                        {/* add button */}
-                        <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-blue-300 to-blue-300 hover:from-blue-500 hover:to-blue-500 transition-all duration-500 cursor-pointer'
-                            onClick={addNewTask}>
-                            Add
-                        </button>
+                            {/* add button */}
+                            <button className='p-3 ml-2 rounded-md text-white font-medium bg-gradient-to-r from-blue-300 to-blue-300 hover:from-blue-500 hover:to-blue-500 transition-all duration-500 cursor-pointer'
+                                onClick={addNewTask}>
+                                Add
+                            </button>
+                        </div>  {/* End of select and add button div */}
+
                     </div>
 
                     {/* List of tasks: To do, In progress, Done */}
-                    <div className='flex gap-6 overflow-x-auto pb-6 w-full'>
+                    <div className='flex flex-col sm:flex-row gap-2 sm:gap-6 overflow-x-auto pb-6 w-full'>
                         {Object.keys(columns).map((columnId) => (
                             <div key={columnId}
-                                className={`flex-shrink-0 w-80 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].body ?? ""}`}
+                                className={`flex-shrink-0 w-full sm:w-80 rounded-lg shadow-x1 border-t-4 ${columnStyles[columnId as keyof typeof columnStyles].body ?? ""}`}
                                 onDragOver={(e) => handleDragOver(e, columnId as "todo" | "inProgress" | "done")}
                                 onDrop={(e) => handleDrop(e, columnId as "todo" | "inProgress" | "done")}
                             >
@@ -291,8 +294,8 @@ function KanbanBoard() {
                     </div>
                 </div>
             </div>
+        </div>
 
-        </>
     )
 }
 

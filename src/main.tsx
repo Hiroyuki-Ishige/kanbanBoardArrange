@@ -14,7 +14,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </React.StrictMode>,
 )
 
-//TODO  add function to add tasks in database
-//TODO  add function to remove tasks in Database
-//TODO  add function to move tasks in Database
+//TODO  add function: Mobile responsive
+//TODO  add function: Studay code
 
