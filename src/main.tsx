@@ -14,6 +14,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </React.StrictMode>,
 )
 
-//TODO  add function: Mobile responsive
-//TODO  add function: Studay code
+//TODO  add "Kanbanboard" logo on log-in screen
 

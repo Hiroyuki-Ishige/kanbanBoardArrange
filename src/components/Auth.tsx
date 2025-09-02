@@ -25,12 +25,17 @@ function Auth() {
     };
 
     return (
-        <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex items-center justify-center'>
+
+        <div className='p-6 w-full min-h-screen bg-gradient-to-b from-zinc-600 to-zinc-900 flex flex-col items-center justify-center'>
+            {/* Logo */}
+            <h1 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-300'>React Kanban Board</h1>
+            
+            {/* email, Password and buttons */}
             <div className="mb-8 flex w-full max-w-lg shadow-lg rounded-lg overflow-hidden flex-col items-center justify-center p-6">
                 <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"
-                    className='mb-4 flex-grow bg-zinc-500 rounded-md p-3 w-full text-white' />
+                    className='mb-4 flex-grow bg-zinc-500 rounded-md p-3 w-80 text-white' />
                 <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="Password"
-                    className='mb-4 flex-grow bg-zinc-500 rounded-md p-3 w-full text-white' />
+                    className='mb-4 flex-grow bg-zinc-500 rounded-md p-3 w-80 text-white' />
                 <button onClick={signUp}
                     className='mb-4 p-3 ml-2 w-36 rounded-md text-white font-medium bg-gradient-to-r from-blue-500 to-blue-300 hover:from-blue-500 hover:to-blue-500 transition-all duration-500 cursor-pointer'>Register</button>
                 <button onClick={signIn}
